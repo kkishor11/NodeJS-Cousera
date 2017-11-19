@@ -38,6 +38,13 @@ app.use('/leaders', leaderRouter);
 
 app.use(express.static(__dirname + '/public'));
 
+app.use(function (err, req, res, next) {
+    res.locals.message = err.message;
+    res.locals.error = err;
+    res.status(err.status || 500);
+    res.rendor('error');
+});
+
 app.listen(port, hostname, function () {
     console.log(`Server running at http://${hostname}:${port}/`);
 });
