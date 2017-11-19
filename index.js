@@ -3,9 +3,25 @@
  */
 const express = require('express');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+
 const dishRouter = require('./routes/dishRouter');
 const promoRouter = require('./routes/promoRouter');
 const leaderRouter = require('./routes/leaderRouter');
+
+const Dishes = require('./models/dishes');
+
+const url = 'mongodb://localhost:27017/confusion';
+
+const connect = mongoose.connect(url, {
+    useMongoClient: true
+});
+connect.then((db) => {
+    console.log("Connected to Mongo DB server");
+}, (err) => {
+    console.log(err);
+});
 
 const hostname = 'localhost';
 const port = 3000;
