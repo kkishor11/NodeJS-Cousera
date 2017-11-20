@@ -64,7 +64,7 @@ leaderRouter.route('/:leaderId')
 
     .post((req, res, next) => {
         res.statusCode = 403;
-        res.end('POST operation is not supported on /leaders/' + req.params.promoId);
+        res.end('POST operation is not supported on /leaders/' + req.params.leaderId);
     })
 
     .delete(function (req, res, next) {
