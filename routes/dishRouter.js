@@ -12,7 +12,7 @@ const dishRouter = express.Router();
 dishRouter.use(bodyParser.json());
 
 dishRouter.route('/')
-    .get(function (req, res, next) {
+    .get((req, res, next) => {
         Dishes.find({}).then((dishes) => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
@@ -20,7 +20,7 @@ dishRouter.route('/')
         }, (err) => next(err)).catch((err) => next(err));
     })
 
-    .post(function (req, res, next) {
+    .post((req, res, next) => {
         Dishes.create(req.body).then((dish) => {
             res.statusCode = 201;
             res.setHeader("Content-Type", "application/json");
@@ -34,7 +34,7 @@ dishRouter.route('/')
         res.end('PUT operation is not supported on /dishes');
     })
 
-    .delete(function (req, res, next) {
+    .delete((req, res, next) => {
         Dishes.remove({}).then((result) => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
@@ -43,7 +43,7 @@ dishRouter.route('/')
     })
 
 dishRouter.route('/:dishId')
-    .get(function (req, res, next) {
+    .get((req, res, next) => {
         Dishes.findById(req.params.dishId).then((dishe) => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
@@ -56,7 +56,7 @@ dishRouter.route('/:dishId')
         res.end('POST operation is not supported on /dishes/' + req.params.dishId);
     })
 
-    .put(function (req, res, next) {
+    .put((req, res, next)=>{
         Dishes.findByIdAndUpdate(req.params.dishId, {
             $set: req.body
         }, {
@@ -68,7 +68,7 @@ dishRouter.route('/:dishId')
         }, (err) => next(err)).catch((err) => next(err));
     })
 
-    .delete(function (req, res, next) {
+    .delete((req, res, next)=>{
         Dishes.findByIdAndRemove(req.params.dishId).then((result) => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
@@ -77,7 +77,7 @@ dishRouter.route('/:dishId')
     });
 
 dishRouter.route('/:dishId/comments')
-    .get(function (req, res, next) {
+    .get((req, res, next)=>{
         Dishes.findById(req.params.dishId).then((dish) => {
             if (dish != null) {
                 res.statusCode = 200;
@@ -91,7 +91,7 @@ dishRouter.route('/:dishId/comments')
         }, (err) => next(err)).catch((err) => next(err));
     })
 
-    .post(function (req, res, next) {
+    .post((req, res, next)=>{
         Dishes.findById(req.params.dishId).then((dish) => {
             if (dish != null) {
                 dish.comments.push(req.body);
@@ -113,7 +113,7 @@ dishRouter.route('/:dishId/comments')
         res.end('PUT operation is not supported on /dishes/' + req.params.dishId + '/comments');
     })
 
-    .delete(function (req, res, next) {
+    .delete((req, res, next)=>{
         Dishes.findById(req.params.dishId).then((dish) => {
             if (dish != null) {
                 console.log(dish);
@@ -134,7 +134,7 @@ dishRouter.route('/:dishId/comments')
     })
 
 dishRouter.route('/:dishId/comments/:commentId')
-    .get(function (req, res, next) {
+    .get((req, res, next)=>{
         Dishes.findById(req.params.dishId).then((dish) => {
             if (dish != null && dish.comments.id(req.params.commentId)) {
                 res.statusCode = 200;
@@ -152,7 +152,7 @@ dishRouter.route('/:dishId/comments/:commentId')
         }, (err) => next(err)).catch((err) => next(err));
     })
 
-    .post(function (req, res, next) {
+    .post((req, res, next)=>{
         res.statusCode = 403;
         res.end('POST operation is not supported on /dishes/' + req.params.dishId + '/comments/' + req.params.commentId);
     })
@@ -184,7 +184,7 @@ dishRouter.route('/:dishId/comments/:commentId')
         }, (err) => next(err)).catch((err) => next(err));
     })
 
-    .delete(function (req, res, next) {
+    .delete((req, res, next)=>{
         Dishes.findById(req.params.dishId).then((dish) => {
             if (dish != null && dish.comments.id(req.params.commentId)) {
                 dish.comments.id(req.params.commentId).remove();

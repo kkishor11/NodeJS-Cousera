@@ -12,7 +12,7 @@ const promoRouter = express.Router();
 promoRouter.use(bodyParser.json());
 
 promoRouter.route('/')
-    .get(function (req, res, next) {
+    .get((req, res, next) => {
         Promos.find({}).then((promos) => {
             res.status = 200;
             res.setHeader("Content-Type", "application/json");
@@ -25,7 +25,7 @@ promoRouter.route('/')
         res.end('PUT operation is not supported on /promotions');
     })
 
-    .post(function (req, res, next) {
+    .post((req, res, next) => {
         Promos.create(req.body).then((promo) => {
             res.status = 200;
             res.setHeader("Content-Type", "application/json");
@@ -33,7 +33,7 @@ promoRouter.route('/')
         }, (err) => next(err)).catch((err) => next(err));
     })
 
-    .delete(function (req, res, next) {
+    .delete((req, res, next) => {
         Promos.remove({}).then((result) => {
             res.status = 200;
             res.setHeader("Content-Type", "application/json");
@@ -42,7 +42,7 @@ promoRouter.route('/')
     });
 
 promoRouter.route('/:promoId')
-    .get(function (req, res, next) {
+    .get((req, res, next) => {
         Promos.findById(req.params.promoId).then((promo) => {
             res.status = 200;
             res.setHeader("Content-Type", "application/json");
@@ -67,7 +67,7 @@ promoRouter.route('/:promoId')
         res.end('POST operation is not supported on /promotions/' + req.params.promoId);
     })
 
-    .delete(function (req, res, next) {
+    .delete((req, res, next) => {
         Promos.findByIdAndRemove(req.params.promoId).then((result) => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");

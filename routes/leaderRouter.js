@@ -12,7 +12,7 @@ const leaderRouter = express.Router();
 leaderRouter.use(bodyParser.json());
 
 leaderRouter.route('/')
-    .get(function (req, res, next) {
+    .get((req, res, next) => {
         Leaders.find({}).then((leaders) => {
             res.status = 200;
             res.setHeader("Content-Type", "application/json");
@@ -25,7 +25,7 @@ leaderRouter.route('/')
         res.end('PUT operation is not supported on /leaders');
     })
 
-    .post(function (req, res, next) {
+    .post((req, res, next) => {
         Leaders.create(req.body).then((leader) => {
             res.status = 200;
             res.setHeader("Content-Type", "application/json");
@@ -33,7 +33,7 @@ leaderRouter.route('/')
         }, (err) => next(err)).catch((err) => next(err));
     })
 
-    .delete(function (req, res, next) {
+    .delete((req, res, next) => {
         Leaders.remove({}).then((result) => {
             res.status = 200;
             res.setHeader("Content-Type", "application/json");
@@ -42,7 +42,7 @@ leaderRouter.route('/')
     });
 
 leaderRouter.route('/:leaderId')
-    .get(function (req, res, next) {
+    .get((req, res, next) => {
         Leaders.findById(req.params.leaderId).then((leader) => {
             res.status = 200;
             res.setHeader("Content-Type", "application/json");
@@ -67,7 +67,7 @@ leaderRouter.route('/:leaderId')
         res.end('POST operation is not supported on /leaders/' + req.params.leaderId);
     })
 
-    .delete(function (req, res, next) {
+    .delete((req, res, next) => {
         Leaders.findByIdAndRemove(req.params.leaderId).then((result) => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
