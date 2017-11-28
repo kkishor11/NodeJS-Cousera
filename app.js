@@ -55,46 +55,30 @@ app.use(session({
 
 function auth(req, res, next) {
   console.log(req.session);
-
   if (!req.session.user) {
-    var authHeader = req.headers.authorization;
-    if (!authHeader) {
-      var err = new Error('You are not authenticated');
-      res.setHeader('WWW-Authenticate', 'Basic');
-      err.status = 401;
-      return next(err);
-    }
-
-    var auth = new Buffer(authHeader.split(' ')[1], 'base64').toString().split(':');
-    var username = auth[0];
-    var password = auth[1];
-
-    if (username === 'kundan' && password === 'password') {
-      req.session.user = username;
-      next();
-    } else {
-      var err = new Error('You are not authenticated');
-      res.setHeader('WWW-Authenticate', 'Basic');
-      err.status = 401;
-      return next(err);
-    }
+    var err = new Error('You are not authenticated');
+    res.setHeader('WWW-Authenticate', 'Basic');
+    err.status = 403;
+    return next(err);
   } else {
-    if (req.session.user === 'kundan') {
+    if (req.session.user === 'authenticated') {
       next();
     } else {
       var err = new Error('You are not authenticated');
-      err.status = 401;
+      err.status = 403;
       return next(err);
     }
   }
 }
 
+app.use('/', index);
+app.use('/users', users);
+
 app.use(auth);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
-app.use('/users', users);
+
 //Routing all /dishes to dishRouter
 app.use('/dishes', dishRouter);
 //Routing all /promotions to promoRouter
