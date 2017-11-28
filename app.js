@@ -41,29 +41,42 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
-app.use(cookieParser());
+app.use(cookieParser('IT_IS_FUN_TO_LEARN'));
 
 function auth(req, res, next) {
-  console.log(req.headers);
-  var authHeader = req.headers.authorization;
-  if (!authHeader) {
-    var err = new Error('You are not authenticated');
-    res.setHeader('WWW-Authenticate', 'Basic');
-    err.status = 401;
-    return next(err);
-  }
+  console.log(req.signedCookies);
+  if (!req.signedCookies.user) {
+    var authHeader = req.headers.authorization;
+    if (!authHeader) {
+      var err = new Error('You are not authenticated');
+      res.setHeader('WWW-Authenticate', 'Basic');
+      err.status = 401;
+      return next(err);
+    }
 
-  var auth = new Buffer(authHeader.split(' ')[1], 'base64').toString().split(':');
-  var username = auth[0];
-  var password = auth[1];
+    var auth = new Buffer(authHeader.split(' ')[1], 'base64').toString().split(':');
+    var username = auth[0];
+    var password = auth[1];
 
-  if (username === 'kundan' && password === 'password') {
-    next();
+    if (username === 'kundan' && password === 'password') {
+      res.cookie('user', username, {
+        signed: true
+      });
+      next();
+    } else {
+      var err = new Error('You are not authenticated');
+      res.setHeader('WWW-Authenticate', 'Basic');
+      err.status = 401;
+      return next(err);
+    }
   } else {
-    var err = new Error('You are not authenticated');
-    res.setHeader('WWW-Authenticate', 'Basic');
-    err.status = 401;
-    return next(err);
+    if (req.signedCookies.user === 'kundan') {
+      next();
+    } else {
+      var err = new Error('You are not authenticated');
+      err.status = 401;
+      return next(err);
+    }
   }
 }
 
