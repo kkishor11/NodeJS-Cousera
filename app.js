@@ -1,25 +1,27 @@
-const express = require('express');
-const path = require('path');
-const favicon = require('serve-favicon');
-const logger = require('morgan');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
+var express = require('express');
+var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var session = require('express-session');
+var FileStore = require('session-file-store')(session);
 
-const index = require('./routes/index');
-const users = require('./routes/users');
-const dishRouter = require('./routes/dishRouter');
-const promoRouter = require('./routes/promoRouter');
-const leaderRouter = require('./routes/leaderRouter');
+var index = require('./routes/index');
+var users = require('./routes/users');
+var dishRouter = require('./routes/dishRouter');
+var promoRouter = require('./routes/promoRouter');
+var leaderRouter = require('./routes/leaderRouter');
 
-const mongoose = require('mongoose');
+var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
 
-const Dishes = require('./models/dishes');
+var Dishes = require('./models/dishes');
 
-const url = 'mongodb://localhost:27017/confusion';
+var url = 'mongodb://localhost:27017/confusion';
 
-const connect = mongoose.connect(url, {
+var connect = mongoose.connect(url, {
   useMongoClient: true
 });
 connect.then((db) => {
@@ -41,11 +43,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
-app.use(cookieParser('IT_IS_FUN_TO_LEARN'));
+//app.use(cookieParser('IT_IS_FUN_TO_LEARN'));
+
+app.use(session({
+  name: 'session-id',
+  secret: 'IT_IS_FUN_TO_LEARN',
+  saveUninitialized: false,
+  resave: false,
+  store: new FileStore()
+}));
 
 function auth(req, res, next) {
-  console.log(req.signedCookies);
-  if (!req.signedCookies.user) {
+  console.log(req.session);
+
+  if (!req.session.user) {
     var authHeader = req.headers.authorization;
     if (!authHeader) {
       var err = new Error('You are not authenticated');
@@ -59,9 +70,7 @@ function auth(req, res, next) {
     var password = auth[1];
 
     if (username === 'kundan' && password === 'password') {
-      res.cookie('user', username, {
-        signed: true
-      });
+      req.session.user = username;
       next();
     } else {
       var err = new Error('You are not authenticated');
@@ -70,7 +79,7 @@ function auth(req, res, next) {
       return next(err);
     }
   } else {
-    if (req.signedCookies.user === 'kundan') {
+    if (req.session.user === 'kundan') {
       next();
     } else {
       var err = new Error('You are not authenticated');
