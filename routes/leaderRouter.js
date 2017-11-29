@@ -21,12 +21,12 @@ leaderRouter.route('/')
         }, (err) => next(err)).catch((err) => next(err));
     })
 
-    .put(authenticate.verifyUser, (req, res, next) => {
+    .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         res.statusCode = 403;
         res.end('PUT operation is not supported on /leaders');
     })
 
-    .post(authenticate.verifyUser, (req, res, next) => {
+    .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         Leaders.create(req.body).then((leader) => {
             res.status = 200;
             res.setHeader("Content-Type", "application/json");
@@ -34,7 +34,7 @@ leaderRouter.route('/')
         }, (err) => next(err)).catch((err) => next(err));
     })
 
-    .delete(authenticate.verifyUser, (req, res, next) => {
+    .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         Leaders.remove({}).then((result) => {
             res.status = 200;
             res.setHeader("Content-Type", "application/json");
@@ -51,7 +51,7 @@ leaderRouter.route('/:leaderId')
         }, (err) => next(err)).catch((err) => next(err));
     })
 
-    .put(authenticate.verifyUser, (req, res, next) => {
+    .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         Leaders.findByIdAndUpdate(req.params.leaderId, {
             $set: req.body
         }, {
@@ -63,12 +63,12 @@ leaderRouter.route('/:leaderId')
         }, (err) => next(err)).catch((err) => next(err));
     })
 
-    .post(authenticate.verifyUser, (req, res, next) => {
+    .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         res.statusCode = 403;
         res.end('POST operation is not supported on /leaders/' + req.params.leaderId);
     })
 
-    .delete(authenticate.verifyUser, (req, res, next) => {
+    .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         Leaders.findByIdAndRemove(req.params.leaderId).then((result) => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
