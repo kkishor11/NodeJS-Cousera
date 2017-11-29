@@ -8,6 +8,7 @@ var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 var passport = require('passport');
 var authenticate = require('./authenticate');
+var config = require('./config');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -21,7 +22,7 @@ mongoose.Promise = require('bluebird');
 
 var Dishes = require('./models/dishes');
 
-var url = 'mongodb://localhost:27017/confusion';
+var url = config.mongoUrl;
 
 var connect = mongoose.connect(url, {
   useMongoClient: true
@@ -47,34 +48,34 @@ app.use(bodyParser.urlencoded({
 }));
 //app.use(cookieParser('IT_IS_FUN_TO_LEARN'));
 
-app.use(session({
-  name: 'session-id',
-  secret: 'IT_IS_FUN_TO_LEARN',
-  saveUninitialized: false,
-  resave: false,
-  store: new FileStore()
-}));
+// app.use(session({
+//   name: 'session-id',
+//   secret: 'IT_IS_FUN_TO_LEARN',
+//   saveUninitialized: false,
+//   resave: false,
+//   store: new FileStore()
+// }));
 
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
-function auth(req, res, next) {
-  console.log(req.user);
+// function auth(req, res, next) {
+//   console.log(req.user);
 
-  if (!req.user) {
-    var err = new Error('You are not authenticated!');
-    res.setHeader('WWW-Authenticate', 'Basic');
-    err.status = 401;
-    next(err);
-  } else {
-    next();
-  }
-}
+//   if (!req.user) {
+//     var err = new Error('You are not authenticated!');
+//     res.setHeader('WWW-Authenticate', 'Basic');
+//     err.status = 401;
+//     next(err);
+//   } else {
+//     next();
+//   }
+// }
 
 app.use('/', index);
 app.use('/users', users);
 
-app.use(auth);
+// app.use(auth);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
