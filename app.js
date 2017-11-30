@@ -16,6 +16,7 @@ var dishRouter = require('./routes/dishRouter');
 var promoRouter = require('./routes/promoRouter');
 var leaderRouter = require('./routes/leaderRouter');
 var uploadRouter = require('./routes/uploadRouter');
+var favouriteRouter = require('./routes/favouritesRouter');
 
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
@@ -96,6 +97,8 @@ app.use('/promotions', promoRouter);
 app.use('/leaders', leaderRouter);
 //Configure the upload router
 app.use('/imageUpload', uploadRouter);
+//Routing the favourites route
+app.use('/favourites', favouriteRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
