@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const favouriteSchema = new Schema({
+const favoriteSchema = new Schema({
     postedBy: {
         required: true,
         type: mongoose.Schema.Types.ObjectId,
@@ -15,5 +15,5 @@ const favouriteSchema = new Schema({
     timestamps: true
 });
 
-const Favourites = mongoose.model('Favourite', favouriteSchema);
-module.exports = Favourites;
+const Favorites = mongoose.model('Favorite', favoriteSchema);
+module.exports = Favorites;

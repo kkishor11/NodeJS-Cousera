@@ -2,18 +2,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const authenticate = require('../authenticate');
-const Favourites = require('../models/favourites');
+const Favorites = require('../models/favorite');
 const cors = require('./cors');
 
-const favouritesRouter = express.Router();
-favouritesRouter.use(bodyParser.json());
+const favoritesRouter = express.Router();
+favoritesRouter.use(bodyParser.json());
 
-favouritesRouter.route('/')
+favoritesRouter.route('/')
     .options(cors.corsWithOptions, (req, res) => {
         res.sendStatus(200);
     })
     .get(cors.cors, authenticate.verifyUser, (req, res, next) => {
-        Favourites.find({
+        Favorites.find({
                 postedBy: req.user._id
             }).populate('postedBy').populate('dishes')
             .then((favourites) => {
@@ -23,7 +23,7 @@ favouritesRouter.route('/')
             }, (err) => next(err)).catch((err) => next(err));
     })
     .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-        Favourites.find({
+        Favorites.find({
                 postedBy: req.user._id
             })
             .then((favourites) => {
@@ -62,7 +62,7 @@ favouritesRouter.route('/')
                     }
 
                 } else {
-                    Favourites.create({
+                    Favorites.create({
                         postedBy: req.user._id,
                         dishes: req.body
                     }, (err, favourite) => {
@@ -75,7 +75,7 @@ favouritesRouter.route('/')
             }, (err) => next(err)).catch((err) => next(err));
     })
     .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-        Favourites.remove({
+        Favorites.remove({
             postedBy: req.user._id
         }).then((result) => {
             res.statusCode = 200;
@@ -84,26 +84,26 @@ favouritesRouter.route('/')
         }, (err) => next(err)).catch((err) => next(err));
     });
 
-favouritesRouter.route('/:dishId')
+favoritesRouter.route('/:dishId')
     .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-        Favourites.find({
+        Favorites.find({
                 postedBy: req.user._id
             })
             .then((favourites) => {
                 if (favourites.length) {
-                    const favouriteExists = false;
+                    var favouriteExists = false;
                     if (favourites[0].dishes.length) {
                         for (var i = (favourites[0].dishes.length - 1); i >= 0; i--) {
                             console.log(favourites[0].dishes[i] == req.params.dishId)
                             console.log(favourites[0].dishes[i])
                             console.log(req.params.dishId)
-                            favouriteExist = favourites[0].dishes[i] == req.params.dishId;
+                            favouriteExists = favourites[0].dishes[i] == req.params.dishId;
                             if (favouriteExists) {
                                 break;
                             }
                         }
                     }
-                    if (!favouriteExist) {
+                    if (!favouriteExists) {
                         favourites[0].dishes.push(req.params.dishId);
                         favourites[0].save((err, favourite) => {
                             if (err) throw err;
@@ -118,7 +118,7 @@ favouritesRouter.route('/:dishId')
                     }
 
                 } else {
-                    Favourites.create({
+                    Favorites.create({
                         postedBy: req.user._id,
                         dishes: req.params.dishId
                     }, (err, favourite) => {
@@ -131,7 +131,7 @@ favouritesRouter.route('/:dishId')
             }, (err) => next(err)).catch((err) => next(err));
     })
     .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-        Favourites.find({
+        Favorites.find({
                 postedBy: req.user._id
             })
             .then((favourites) => {
@@ -157,4 +157,4 @@ favouritesRouter.route('/:dishId')
             }, (err) => next(err)).catch((err) => next(err));
     });
 
-module.exports = favouritesRouter;
+module.exports = favoritesRouter;
